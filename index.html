@@ -1,0 +1,3735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Guardian AI | Smart Emergency Wearable</title>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- LEAFLET -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#05080d;
+    color:#eaf6ff;
+    overflow-x:hidden;
+}
+
+/* ================= HEADER ================= */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px 6%;
+
+    background:rgba(5,8,13,.94);
+
+    border-bottom:1px solid #20303d;
+
+    backdrop-filter:blur(15px);
+}
+
+.logo{
+    font-size:23px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+.logo span{
+    color:#00e5ff;
+}
+
+nav a{
+    color:#c8d7df;
+    text-decoration:none;
+    margin-left:20px;
+    font-size:14px;
+    transition:.2s;
+}
+
+nav a:hover{
+    color:#00e5ff;
+}
+
+/* ================= GENERAL ================= */
+
+section{
+    padding:80px 7%;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.title h2{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+.title p{
+    color:#8499a5;
+}
+
+.small{
+    color:#78909c;
+    font-size:12px;
+}
+
+/* ================= BUTTONS ================= */
+
+button{
+    border:0;
+    padding:13px 20px;
+    border-radius:9px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    margin:5px;
+
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.1);
+}
+
+.primary{
+    background:#00e5ff;
+    color:#001017;
+}
+
+.secondary{
+    background:#111c25;
+    color:#dcebf2;
+    border:1px solid #263b48;
+}
+
+.emergency-button{
+    background:#ff304f;
+    color:white;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+
+    min-height:90vh;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    align-items:center;
+
+    gap:30px;
+}
+
+.hero h1{
+    font-size:clamp(45px,6vw,80px);
+
+    line-height:.95;
+
+    margin-top:12px;
+}
+
+.hero h1 span{
+    color:#00e5ff;
+}
+
+.hero p{
+    color:#9db0bc;
+
+    margin:25px 0;
+
+    line-height:1.7;
+
+    max-width:650px;
+}
+
+/* ================= 3D MODEL ================= */
+
+.model-box{
+
+    height:560px;
+
+    border:1px solid #203440;
+
+    border-radius:25px;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(0,229,255,.08),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            145deg,
+            #0c141b,
+            #05080c
+        );
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 0 70px rgba(0,229,255,.08);
+}
+
+#model3d{
+    width:100%;
+    height:100%;
+}
+
+.model-label{
+
+    position:absolute;
+
+    bottom:18px;
+    left:18px;
+
+    padding:9px 12px;
+
+    background:rgba(3,8,12,.8);
+
+    border:1px solid #25414d;
+
+    border-radius:8px;
+
+    font-size:12px;
+
+    color:#9dd9e6;
+}
+
+/* ================= COMPONENTS ================= */
+
+.components{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+}
+
+.card{
+
+    background:#0a1117;
+
+    border:1px solid #20323e;
+
+    padding:22px;
+
+    border-radius:15px;
+
+    transition:.25s;
+}
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+    border-color:#00bcd4;
+
+    box-shadow:
+        0 10px 35px rgba(0,229,255,.08);
+}
+
+.card h3{
+
+    margin-bottom:10px;
+
+    color:#00e5ff;
+}
+
+.card p{
+
+    color:#91a4af;
+
+    line-height:1.55;
+
+    font-size:14px;
+}
+
+/* ================= FLOW ================= */
+
+.flow{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+}
+
+.flow-item{
+
+    padding:15px 18px;
+
+    border:1px solid #21404c;
+
+    background:#0b151c;
+
+    border-radius:12px;
+
+    color:#bdebf3;
+}
+
+/* ================= DASHBOARD ================= */
+
+.dashboard{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(12,1fr);
+
+    gap:16px;
+}
+
+.panel{
+
+    background:#091118;
+
+    border:1px solid #20333f;
+
+    border-radius:15px;
+
+    padding:20px;
+}
+
+.panel h3{
+
+    margin-bottom:15px;
+
+    color:#00e5ff;
+}
+
+.big-alert{
+
+    grid-column:span 12;
+
+    min-height:80px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.alert-normal{
+
+    border-color:#1d3943;
+}
+
+.alert-danger{
+
+    border-color:#ff304f;
+
+    box-shadow:
+        0 0 35px rgba(255,48,79,.18);
+}
+
+.status{
+
+    font-size:23px;
+
+    font-weight:bold;
+}
+
+.status.normal{
+    color:#55e39b;
+}
+
+.status.danger{
+    color:#ff4d68;
+}
+
+.metric{
+
+    grid-column:span 3;
+}
+
+.metric-value{
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    margin-top:8px;
+}
+
+.good{
+    color:#55e39b;
+}
+
+.danger{
+    color:#ff4d68;
+}
+
+.warning{
+    color:#ffd166;
+}
+
+/* ================= GRAPH ================= */
+
+.graph-panel{
+
+    grid-column:span 8;
+}
+
+#heartGraph{
+
+    width:100%;
+
+    height:250px;
+
+    background:#050b10;
+
+    border-radius:10px;
+}
+
+/* ================= AI LOG ================= */
+
+.ai-panel{
+
+    grid-column:span 4;
+}
+
+.log{
+
+    height:250px;
+
+    overflow:auto;
+
+    background:#050b10;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    font-family:monospace;
+
+    font-size:12px;
+
+    line-height:1.8;
+}
+
+/* ================= MAP ================= */
+
+.map-panel{
+
+    grid-column:span 8;
+}
+
+#map{
+
+    height:420px;
+
+    border-radius:12px;
+
+    overflow:hidden;
+}
+
+.live-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:8px 12px;
+
+    margin-top:10px;
+
+    border-radius:20px;
+
+    border:1px solid #244653;
+
+    font-size:12px;
+}
+
+.live-dot{
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:#55e39b;
+
+    box-shadow:
+        0 0 10px #55e39b;
+
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+
+    50%{
+        opacity:.3;
+    }
+}
+
+.location-data{
+
+    margin-top:10px;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    background:#050b10;
+
+    border:1px solid #20333f;
+
+    font-family:monospace;
+
+    font-size:12px;
+
+    color:#9fc4cf;
+}
+
+/* ================= PHONE ================= */
+
+.guardian{
+
+    grid-column:span 4;
+}
+
+.phone{
+
+    background:#05080d;
+
+    border:1px solid #263d49;
+
+    border-radius:25px;
+
+    padding:22px;
+
+    min-height:320px;
+}
+
+.phone-top{
+
+    text-align:center;
+
+    color:#788f9a;
+
+    margin-bottom:20px;
+}
+
+.notification{
+
+    background:#111b22;
+
+    border:1px solid #314854;
+
+    border-radius:13px;
+
+    padding:15px;
+
+    margin-top:15px;
+}
+
+.notification strong{
+
+    color:#ff536b;
+}
+
+/* ================= ARCHITECTURE ================= */
+
+.architecture{
+
+    max-width:900px;
+
+    margin:auto;
+
+    background:#091118;
+
+    border:1px solid #20343f;
+
+    padding:30px;
+
+    border-radius:16px;
+
+    text-align:center;
+}
+
+.arch-row{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin:15px 0;
+}
+
+.arch-box{
+
+    padding:15px 20px;
+
+    border:1px solid #21404c;
+
+    border-radius:10px;
+
+    background:#0b151c;
+
+    color:#bdebf3;
+}
+
+.arrow{
+
+    color:#00e5ff;
+
+    font-size:25px;
+}
+
+/* ================= SYNOPSIS ================= */
+
+.synopsis{
+
+    max-width:900px;
+
+    margin:auto;
+
+    background:#091118;
+
+    border:1px solid #20343f;
+
+    padding:30px;
+
+    border-radius:16px;
+
+    line-height:1.8;
+
+    color:#a5b7c0;
+}
+
+/* ================= EXHIBITION ================= */
+
+.exhibition{
+
+    position:fixed;
+
+    right:20px;
+
+    bottom:20px;
+
+    z-index:2000;
+}
+
+.exhibition button{
+
+    background:#00e5ff;
+
+    color:#001017;
+
+    box-shadow:
+        0 0 30px rgba(0,229,255,.3);
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+
+    text-align:center;
+
+    padding:40px;
+
+    color:#607782;
+
+    border-top:1px solid #172832;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+
+    .hero{
+
+        grid-template-columns:1fr;
+    }
+
+    .model-box{
+
+        height:450px;
+    }
+
+    .metric,
+    .graph-panel,
+    .ai-panel,
+    .map-panel,
+    .guardian{
+
+        grid-column:span 12;
+    }
+
+    nav{
+
+        display:none;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+HEADER
+========================================================= -->
+
+<header>
+
+    <div class="logo">
+        GUARDIAN <span>AI</span>
+    </div>
+
+    <nav>
+
+        <a href="#model">3D Model</a>
+
+        <a href="#components">Components</a>
+
+        <a href="#working">Working</a>
+
+        <a href="#dashboard">Dashboard</a>
+
+        <a href="#location">Location</a>
+
+        <a href="#architecture">Architecture</a>
+
+    </nav>
+
+</header>
+
+
+<!-- =========================================================
+HERO
+========================================================= -->
+
+<section class="hero" id="model">
+
+    <div>
+
+        <div class="small">
+            AI-ASSISTED WEARABLE SAFETY SYSTEM
+        </div>
+
+        <h1>
+            Guardian<br>
+            <span>AI</span>
+        </h1>
+
+        <p>
+
+            A smart wearable emergency detection system
+            combining heart-rate monitoring, motion sensing,
+            AI analysis, camera, live GPS/GNSS location,
+            cellular communication and guardian alerts.
+
+        </p>
+
+        <button
+            class="primary"
+            onclick="startSimulation()">
+
+            ▶ Start Live Simulation
+
+        </button>
+
+        <button
+            class="emergency-button"
+            onclick="triggerEmergency()">
+
+            ⚠ Simulate Emergency
+
+        </button>
+
+        <button
+            class="secondary"
+            onclick="resetSystem()">
+
+            ↻ Reset
+
+        </button>
+
+        <p class="small">
+
+            Live location uses the device/browser GPS.
+            Real SMS/WhatsApp delivery requires the
+            secure backend endpoint described below.
+
+        </p>
+
+    </div>
+
+
+    <div class="model-box">
+
+        <div id="model3d"></div>
+
+        <div class="model-label">
+
+            DRAG TO ROTATE • SCROLL TO ZOOM
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+COMPONENTS
+========================================================= -->
+
+<section id="components">
+
+    <div class="title">
+
+        <h2>
+            System Components
+        </h2>
+
+        <p>
+            Main hardware modules
+        </p>
+
+    </div>
+
+
+    <div class="components">
+
+        <div class="card">
+
+            <h3>📷 Mini Camera</h3>
+
+            <p>
+                Captures an event recording when
+                emergency verification is activated.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>❤️ Heart Sensor</h3>
+
+            <p>
+                Continuously monitors heart-rate
+                variation.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📐 Motion Sensor</h3>
+
+            <p>
+                Detects sudden movement and
+                possible fall-like events.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🧠 AI Processor</h3>
+
+            <p>
+                Combines multiple sensor signals
+                before generating an alert.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📍 GPS/GNSS</h3>
+
+            <p>
+                Provides the device's live
+                latitude and longitude.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📶 GSM/LTE</h3>
+
+            <p>
+                Provides the communication link
+                for the real hardware.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📳 Vibration Motor</h3>
+
+            <p>
+                Gives local emergency feedback.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>☀ Solar + Battery</h3>
+
+            <p>
+                Provides supplementary charging
+                for the rechargeable battery.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+WORKING
+========================================================= -->
+
+<section id="working">
+
+    <div class="title">
+
+        <h2>
+            How Guardian AI Works
+        </h2>
+
+        <p>
+            Sensor → AI → Verification → Location → Guardian
+        </p>
+
+    </div>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            ❤️ Heart Rate
+        </div>
+
+        <div class="flow-item">
+            📐 Motion
+        </div>
+
+        <div class="flow-item">
+            🧠 AI Analysis
+        </div>
+
+        <div class="flow-item">
+            📷 Verification
+        </div>
+
+        <div class="flow-item">
+            📍 Live GPS
+        </div>
+
+        <div class="flow-item">
+            📶 SMS / WhatsApp
+        </div>
+
+        <div class="flow-item">
+            👤 Guardian
+        </div>
+
+    </div>
+
+
+    <div style="text-align:center;margin-top:30px">
+
+        <button
+            class="primary"
+            onclick="startSimulation()">
+
+            Start Automatic Monitoring
+
+        </button>
+
+        <button
+            class="emergency-button"
+            onclick="triggerEmergency()">
+
+            Create Dangerous Event
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+DASHBOARD
+========================================================= -->
+
+<section id="dashboard">
+
+    <div class="title">
+
+        <h2>
+            Live Guardian Dashboard
+        </h2>
+
+        <p>
+            Real-time prototype monitoring
+        </p>
+
+    </div>
+
+
+    <div class="dashboard">
+
+
+        <!-- MAIN STATUS -->
+
+        <div
+            class="panel big-alert alert-normal"
+            id="alertPanel">
+
+            <div>
+
+                <div class="small">
+                    SYSTEM CONDITION
+                </div>
+
+                <div
+                    class="status normal"
+                    id="systemStatus">
+
+                    ● NORMAL MONITORING
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="small"
+                id="simulationTime">
+
+                Simulation stopped
+
+            </div>
+
+        </div>
+
+
+        <!-- HEART -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                HEART RATE
+            </div>
+
+            <div class="metric-value">
+
+                <span id="heartRate">
+                    78
+                </span>
+
+                <span style="font-size:14px">
+                    BPM
+                </span>
+
+            </div>
+
+            <div
+                id="heartState"
+                class="good">
+
+                Normal
+
+            </div>
+
+        </div>
+
+
+        <!-- MOTION -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                MOTION
+            </div>
+
+            <div
+                class="metric-value"
+                id="motionValue">
+
+                Stable
+
+            </div>
+
+            <div
+                id="motionState"
+                class="good">
+
+                Normal
+
+            </div>
+
+        </div>
+
+
+        <!-- CAMERA -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                CAMERA
+            </div>
+
+            <div
+                class="metric-value"
+                id="cameraValue">
+
+                OFF
+
+            </div>
+
+            <div
+                id="cameraState"
+                class="good">
+
+                Standby
+
+            </div>
+
+        </div>
+
+
+        <!-- BATTERY -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                BATTERY
+            </div>
+
+            <div class="metric-value">
+
+                <span id="battery">
+                    94
+                </span>%
+
+            </div>
+
+            <div class="good">
+                Power Available
+            </div>
+
+        </div>
+
+
+        <!-- HEART GRAPH -->
+
+        <div class="panel graph-panel">
+
+            <h3>
+                Live Heart-Rate Variation
+            </h3>
+
+            <canvas id="heartGraph"></canvas>
+
+            <div
+                class="small"
+                style="margin-top:10px">
+
+                Demonstration sensor data.
+                Not a medical measurement.
+
+            </div>
+
+        </div>
+
+
+        <!-- AI LOG -->
+
+        <div class="panel ai-panel">
+
+            <h3>
+                AI Decision Panel
+            </h3>
+
+            <div
+                class="log"
+                id="aiLog">
+
+                <div>
+                    [SYSTEM] Guardian AI initialized.
+                </div>
+
+                <div>
+                    [HEART] Normal monitoring.
+                </div>
+
+                <div>
+                    [MOTION] Motion sensor stable.
+                </div>
+
+                <div>
+                    [AI] Waiting for sensor variation...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- GPS -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                GPS / GNSS
+            </div>
+
+            <div
+                class="metric-value"
+                id="gpsStatus">
+
+                READY
+
+            </div>
+
+            <div
+                class="good"
+                id="gpsState">
+
+                Starting location tracking
+
+            </div>
+
+        </div>
+
+
+        <!-- CELLULAR -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                CELLULAR
+            </div>
+
+            <div
+                class="metric-value"
+                id="cellularStatus">
+
+                READY
+
+            </div>
+
+            <div
+                class="good"
+                id="cellularState">
+
+                Backend ready
+
+            </div>
+
+        </div>
+
+
+        <!-- VIBRATION -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                VIBRATION
+            </div>
+
+            <div
+                class="metric-value"
+                id="vibrationStatus">
+
+                OFF
+
+            </div>
+
+            <div
+                class="good"
+                id="vibrationState">
+
+                Standby
+
+            </div>
+
+        </div>
+
+
+        <!-- GUARDIAN -->
+
+        <div class="panel metric">
+
+            <div class="small">
+                GUARDIAN
+            </div>
+
+            <div
+                class="metric-value"
+                style="font-size:20px">
+
+                CONFIGURED
+
+            </div>
+
+            <div class="good">
+
+                SMS + WhatsApp
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+        LIVE MAP
+        ================================================= -->
+
+        <div
+            class="panel map-panel"
+            id="location">
+
+            <h3>
+                📍 LIVE DEVICE LOCATION
+            </h3>
+
+            <div id="map"></div>
+
+
+            <div class="live-badge">
+
+                <span class="live-dot"></span>
+
+                LIVE GPS TRACKING
+
+            </div>
+
+
+            <div
+                class="location-data"
+                id="locationData">
+
+                Waiting for device location...
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+        GUARDIAN PHONE
+        ================================================= -->
+
+        <div class="panel guardian">
+
+            <h3>
+                📱 Guardian Notification
+            </h3>
+
+
+            <div class="phone">
+
+                <div class="phone-top">
+
+                    GUARDIAN PHONE
+
+                </div>
+
+
+                <div class="small">
+
+                    Authorized Guardian
+
+                </div>
+
+
+                <strong>
+
+                    +91 8767531125
+
+                </strong>
+
+
+                <div
+                    class="notification"
+                    id="notification">
+
+                    <strong>
+                        No emergency message
+                    </strong>
+
+                    <p
+                        class="small"
+                        style="margin-top:8px">
+
+                        Emergency notification will
+                        appear here.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+SYSTEM ARCHITECTURE
+========================================================= -->
+
+<section id="architecture">
+
+    <div class="title">
+
+        <h2>
+            System Architecture
+        </h2>
+
+        <p>
+            Hardware → AI → Location → Communication
+        </p>
+
+    </div>
+
+
+    <div class="architecture">
+
+        <div class="arch-row">
+
+            <div class="arch-box">
+                ❤️ Heart Sensor
+            </div>
+
+            <div class="arch-box">
+                📐 Motion Sensor
+            </div>
+
+            <div class="arch-box">
+                📷 Camera
+            </div>
+
+        </div>
+
+
+        <div class="arrow">
+            ↓
+        </div>
+
+
+        <div class="arch-row">
+
+            <div class="arch-box">
+                🧠 AI Processor
+            </div>
+
+        </div>
+
+
+        <div class="arrow">
+            ↓
+        </div>
+
+
+        <div class="arch-row">
+
+            <div class="arch-box">
+                📍 GPS / GNSS
+            </div>
+
+            <div class="arch-box">
+                📳 Vibration
+            </div>
+
+        </div>
+
+
+        <div class="arrow">
+            ↓
+        </div>
+
+
+        <div class="arch-row">
+
+            <div class="arch-box">
+                📶 GSM / LTE
+            </div>
+
+        </div>
+
+
+        <div class="arrow">
+            ↓
+        </div>
+
+
+        <div class="arch-row">
+
+            <div class="arch-box">
+                📱 Guardian SMS
+            </div>
+
+            <div class="arch-box">
+                💬 Guardian WhatsApp
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+SYNOPSIS
+========================================================= -->
+
+<section>
+
+    <div class="title">
+
+        <h2>
+            Project Synopsis
+        </h2>
+
+    </div>
+
+
+    <div class="synopsis">
+
+        <p>
+
+            <strong>Guardian AI</strong> is an AI-assisted
+            wearable emergency detection and alert system.
+
+            The device combines heart-rate sensing,
+            motion sensing, camera verification,
+            AI-based event analysis, GPS/GNSS,
+            cellular communication, vibration feedback,
+            rechargeable battery and supplementary
+            solar charging.
+
+        </p>
+
+        <br>
+
+        <p>
+
+            During normal operation, the system monitors
+            sensor information continuously. If unusual
+            heart-rate and motion patterns occur together,
+            the AI enters a verification stage.
+
+        </p>
+
+        <br>
+
+        <p>
+
+            After verification, the device obtains its
+            current location and sends an emergency
+            notification containing the location to the
+            authorized guardian.
+
+        </p>
+
+        <br>
+
+        <p>
+
+            The website demonstrates the complete workflow
+            from sensor monitoring to emergency notification.
+            Live GPS can be displayed when location permission
+            is granted. Actual SMS and WhatsApp delivery
+            requires a secure messaging backend.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+EXHIBITION MODE
+========================================================= -->
+
+<div class="exhibition">
+
+    <button onclick="exhibitionMode()">
+
+        🎯 Exhibition Mode
+
+    </button>
+
+</div>
+
+
+<footer>
+
+    Guardian AI — Smart Wearable Emergency Detection
+    & Alert System
+
+    <br><br>
+
+    Engineering Exhibition Prototype
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+THREE.JS 3D DEVICE
+========================================================= */
+
+const container =
+document.getElementById("model3d");
+
+const scene =
+new THREE.Scene();
+
+const camera3D =
+new THREE.PerspectiveCamera(
+    45,
+    container.clientWidth /
+    container.clientHeight,
+    0.1,
+    100
+);
+
+camera3D.position.set(
+    0,
+    1.2,
+    7
+);
+
+
+const renderer =
+new THREE.WebGLRenderer({
+    antialias:true,
+    alpha:true
+});
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,2)
+);
+
+renderer.setSize(
+    container.clientWidth,
+    container.clientHeight
+);
+
+container.appendChild(
+    renderer.domElement
+);
+
+
+/* LIGHT */
+
+scene.add(
+    new THREE.AmbientLight(
+        0xffffff,
+        .65
+    )
+);
+
+
+const keyLight =
+new THREE.DirectionalLight(
+    0xffffff,
+    1.7
+);
+
+keyLight.position.set(
+    4,
+    6,
+    7
+);
+
+scene.add(keyLight);
+
+
+const blueLight =
+new THREE.PointLight(
+    0x00e5ff,
+    2.2,
+    10
+);
+
+blueLight.position.set(
+    -3,
+    2,
+    4
+);
+
+scene.add(blueLight);
+
+
+const redLight =
+new THREE.PointLight(
+    0xff244f,
+    0,
+    8
+);
+
+redLight.position.set(
+    2,
+    1,
+    3
+);
+
+scene.add(redLight);
+
+
+/* DEVICE */
+
+const device =
+new THREE.Group();
+
+scene.add(device);
+
+
+/* BODY */
+
+const body =
+new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+        2.05,
+        2.05,
+        .62,
+        96
+    ),
+
+    new THREE.MeshStandardMaterial({
+        color:0x27323a,
+        metalness:.9,
+        roughness:.22
+    })
+
+);
+
+body.rotation.x =
+Math.PI / 2;
+
+device.add(body);
+
+
+/* FRONT */
+
+const front =
+new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+        1.82,
+        1.82,
+        .13,
+        96
+    ),
+
+    new THREE.MeshStandardMaterial({
+        color:0x101820,
+        metalness:.75,
+        roughness:.18
+    })
+
+);
+
+front.rotation.x =
+Math.PI / 2;
+
+front.position.z =
+.34;
+
+device.add(front);
+
+
+/* RING */
+
+const ringMaterial =
+new THREE.MeshStandardMaterial({
+
+    color:0x00bcd4,
+
+    emissive:0x003840,
+
+    metalness:.8,
+
+    roughness:.2
+
+});
+
+
+const ring =
+new THREE.Mesh(
+
+    new THREE.TorusGeometry(
+        1.67,
+        .085,
+        20,
+        96
+    ),
+
+    ringMaterial
+
+);
+
+ring.position.z =
+.42;
+
+device.add(ring);
+
+
+/* CAMERA LENS */
+
+const lensMaterial =
+new THREE.MeshStandardMaterial({
+
+    color:0x07141b,
+
+    metalness:.5,
+
+    roughness:.08,
+
+    emissive:0x00323b
+
+});
+
+
+const lens =
+new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+        .32,
+        .32,
+        .08,
+        64
+    ),
+
+    lensMaterial
+
+);
+
+lens.rotation.x =
+Math.PI / 2;
+
+lens.position.z =
+.65;
+
+device.add(lens);
+
+
+/* LENS CENTER */
+
+const lensCenterMaterial =
+new THREE.MeshStandardMaterial({
+
+    color:0x00e5ff,
+
+    emissive:0x00e5ff,
+
+    emissiveIntensity:.8
+
+});
+
+
+const lensCenter =
+new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+        .13,
+        .13,
+        .035,
+        48
+    ),
+
+    lensCenterMaterial
+
+);
+
+lensCenter.rotation.x =
+Math.PI / 2;
+
+lensCenter.position.z =
+.71;
+
+device.add(lensCenter);
+
+
+/* SENSOR DOTS */
+
+for(
+    let i=0;
+    i<8;
+    i++
+){
+
+    const angle =
+        Math.PI * 2 / 8 * i;
+
+
+    const sensor =
+    new THREE.Mesh(
+
+        new THREE.SphereGeometry(
+            .045,
+            16,
+            16
+        ),
+
+        new THREE.MeshStandardMaterial({
+
+            color:0x00c9dc,
+
+            emissive:0x00343a
+
+        })
+
+    );
+
+
+    sensor.position.set(
+
+        Math.cos(angle)*1.2,
+
+        Math.sin(angle)*1.2,
+
+        .51
+
+    );
+
+
+    device.add(sensor);
+}
+
+
+/* EMERGENCY BUTTON */
+
+const emergencyButton =
+new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+        .15,
+        .15,
+        .16,
+        32
+    ),
+
+    new THREE.MeshStandardMaterial({
+
+        color:0xff304f,
+
+        emissive:0x33000a
+
+    })
+
+);
+
+emergencyButton.rotation.z =
+Math.PI/2;
+
+emergencyButton.position.set(
+    2.08,
+    0,
+    .05
+);
+
+device.add(
+    emergencyButton
+);
+
+
+/* LOOP */
+
+const loop =
+new THREE.Mesh(
+
+    new THREE.TorusGeometry(
+        .38,
+        .09,
+        20,
+        64
+    ),
+
+    new THREE.MeshStandardMaterial({
+
+        color:0x5d6870,
+
+        metalness:.95,
+
+        roughness:.2
+
+    })
+
+);
+
+loop.rotation.x =
+Math.PI/2;
+
+loop.position.y =
+2.2;
+
+device.add(loop);
+
+
+/* ROTATION */
+
+let dragging =
+false;
+
+let previousX =
+0;
+
+let previousY =
+0;
+
+
+renderer.domElement.addEventListener(
+    "pointerdown",
+    e=>{
+
+        dragging=true;
+
+        previousX=
+        e.clientX;
+
+        previousY=
+        e.clientY;
+
+    }
+);
+
+
+window.addEventListener(
+    "pointerup",
+    ()=>{
+        dragging=false;
+    }
+);
+
+
+renderer.domElement.addEventListener(
+    "pointermove",
+    e=>{
+
+        if(!dragging)
+            return;
+
+        const dx =
+            e.clientX -
+            previousX;
+
+        const dy =
+            e.clientY -
+            previousY;
+
+
+        device.rotation.y +=
+            dx*.008;
+
+        device.rotation.x +=
+            dy*.005;
+
+
+        previousX=
+            e.clientX;
+
+        previousY=
+            e.clientY;
+
+    }
+);
+
+
+/* ZOOM */
+
+renderer.domElement.addEventListener(
+    "wheel",
+    e=>{
+
+        camera3D.position.z +=
+            e.deltaY*.006;
+
+
+        camera3D.position.z =
+            Math.max(
+                4,
+                Math.min(
+                    10,
+                    camera3D.position.z
+                )
+            );
+
+    }
+);
+
+
+/* ANIMATION */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    if(!dragging){
+
+        device.rotation.y +=
+            .0025;
+
+    }
+
+
+    renderer.render(
+        scene,
+        camera3D
+    );
+
+}
+
+animate();
+
+
+/* =========================================================
+LIVE GPS LOCATION
+========================================================= */
+
+const map =
+L.map("map")
+.setView(
+    [20.886,75.339],
+    16
+);
+
+
+/*
+OpenStreetMap is used here because
+it does not require a browser API key.
+*/
+
+L.tileLayer(
+
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+    {
+
+        maxZoom:19,
+
+        attribution:
+        "© OpenStreetMap contributors"
+
+    }
+
+).addTo(map);
+
+
+/* INITIAL MARKER */
+
+let deviceMarker =
+L.marker(
+    [20.886,75.339]
+)
+.addTo(map)
+.bindPopup(
+    "<b>Guardian AI</b><br>Waiting for live location..."
+);
+
+
+let accuracyCircle =
+L.circle(
+
+    [20.886,75.339],
+
+    {
+
+        radius:10,
+
+        weight:1,
+
+        fillOpacity:.08
+
+    }
+
+).addTo(map);
+
+
+/* CURRENT LOCATION */
+
+let liveLocation =
+null;
+
+let locationWatchId =
+null;
+
+
+/* START GPS */
+
+function startLiveLocation(){
+
+    if(
+        !navigator.geolocation
+    ){
+
+        document.getElementById(
+            "gpsStatus"
+        ).textContent=
+        "ERROR";
+
+
+        document.getElementById(
+            "gpsState"
+        ).textContent=
+        "Geolocation not supported";
+
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "gpsStatus"
+    ).textContent=
+    "REQUESTING";
+
+
+    locationWatchId =
+    navigator.geolocation.watchPosition(
+
+        position=>{
+
+            const lat =
+                position.coords.latitude;
+
+            const lng =
+                position.coords.longitude;
+
+            const accuracy =
+                position.coords.accuracy;
+
+
+            liveLocation={
+
+                latitude:lat,
+
+                longitude:lng,
+
+                accuracy:accuracy,
+
+                timestamp:
+                    new Date()
+                    .toISOString()
+
+            };
+
+
+            /* MOVE MARKER */
+
+            deviceMarker
+                .setLatLng([
+                    lat,
+                    lng
+                ]);
+
+
+            /* ACCURACY */
+
+            accuracyCircle
+                .setLatLng([
+                    lat,
+                    lng
+                ])
+                .setRadius(
+                    accuracy
+                );
+
+
+            /* MAP */
+
+            map.setView(
+                [lat,lng],
+                17
+            );
+
+
+            /* STATUS */
+
+            document.getElementById(
+                "gpsStatus"
+            ).textContent=
+            "LIVE";
+
+
+            document.getElementById(
+                "gpsState"
+            ).textContent=
+            "Location updating";
+
+
+            document.getElementById(
+                "gpsState"
+            ).className=
+            "good";
+
+
+            /* DATA */
+
+            document.getElementById(
+                "locationData"
+            ).textContent=
+
+            `LATITUDE: ${lat.toFixed(6)}
+LONGITUDE: ${lng.toFixed(6)}
+ACCURACY: ±${Math.round(accuracy)} meters
+UPDATED: ${new Date().toLocaleTimeString()}`;
+
+
+            deviceMarker.bindPopup(
+
+                `<b>GUARDIAN AI</b>
+                <br>
+                LIVE DEVICE LOCATION
+                <br>
+                Accuracy: ±${Math.round(accuracy)} m`
+
+            );
+
+        },
+
+
+        error=>{
+
+            document.getElementById(
+                "gpsStatus"
+            ).textContent=
+            "ERROR";
+
+
+            document.getElementById(
+                "gpsState"
+            ).textContent=
+            error.message;
+
+
+            document.getElementById(
+                "gpsState"
+            ).className=
+            "danger";
+
+        },
+
+
+        {
+
+            enableHighAccuracy:true,
+
+            maximumAge:3000,
+
+            timeout:10000
+
+        }
+
+    );
+
+}
+
+
+startLiveLocation();
+
+
+/* =========================================================
+HEART GRAPH
+========================================================= */
+
+const heartCanvas =
+document.getElementById(
+    "heartGraph"
+);
+
+const ctx =
+heartCanvas.getContext("2d");
+
+
+let heartData=[];
+
+let simulationRunning=
+false;
+
+let emergencyMode=
+false;
+
+let simulationStart=
+0;
+
+let emergencyTimer=
+null;
+
+
+/* RESIZE */
+
+function resizeGraph(){
+
+    const ratio =
+        window.devicePixelRatio || 1;
+
+
+    heartCanvas.width =
+        heartCanvas.clientWidth *
+        ratio;
+
+
+    heartCanvas.height =
+        heartCanvas.clientHeight *
+        ratio;
+
+
+    ctx.setTransform(
+        ratio,
+        0,
+        0,
+        ratio,
+        0,
+        0
+    );
+
+}
+
+
+resizeGraph();
+
+
+/* INITIAL DATA */
+
+for(
+    let i=0;
+    i<70;
+    i++
+){
+
+    heartData.push(
+
+        76 +
+        Math.sin(i*.35)*3 +
+        Math.random()*3
+
+    );
+
+}
+
+
+/* DRAW */
+
+function drawHeartGraph(){
+
+    const w =
+        heartCanvas.clientWidth;
+
+    const h =
+        heartCanvas.clientHeight;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        w,
+        h
+    );
+
+
+    /* GRID */
+
+    ctx.strokeStyle =
+        "#162832";
+
+    ctx.lineWidth=1;
+
+
+    for(
+        let y=0;
+        y<h;
+        y+=40
+    ){
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            y
+        );
+
+        ctx.lineTo(
+            w,
+            y
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    /* LINE */
+
+    ctx.beginPath();
+
+
+    heartData.forEach(
+
+        (value,index)=>{
+
+            const x =
+                index /
+                (heartData.length-1) *
+                w;
+
+
+            const y =
+                h -
+                ((value-50)/100)*h;
+
+
+            if(index===0)
+
+                ctx.moveTo(
+                    x,
+                    y
+                );
+
+            else
+
+                ctx.lineTo(
+                    x,
+                    y
+                );
+
+        }
+
+    );
+
+
+    ctx.strokeStyle =
+        emergencyMode
+        ? "#ff304f"
+        : "#00e5ff";
+
+
+    ctx.lineWidth=2.5;
+
+    ctx.stroke();
+
+
+    /* THRESHOLD */
+
+    const thresholdY =
+        h -
+        ((110-50)/100)*h;
+
+
+    ctx.setLineDash([
+        6,
+        5
+    ]);
+
+
+    ctx.strokeStyle =
+        "#ff304f";
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        0,
+        thresholdY
+    );
+
+    ctx.lineTo(
+        w,
+        thresholdY
+    );
+
+    ctx.stroke();
+
+
+    ctx.setLineDash([]);
+
+
+    ctx.fillStyle =
+        "#8fa5af";
+
+    ctx.font =
+        "11px Arial";
+
+
+    ctx.fillText(
+
+        "Demo threshold: 110 BPM",
+
+        10,
+
+        thresholdY-7
+
+    );
+
+}
+
+
+/* HEART VALUE */
+
+function addHeartValue(){
+
+    let value;
+
+
+    if(
+        emergencyMode
+    ){
+
+        value =
+
+            118 +
+
+            Math.sin(
+                Date.now()/300
+            )*20 +
+
+            Math.sin(
+                Date.now()/143
+            )*12 +
+
+            Math.random()*12;
+
+
+        value =
+            Math.max(
+                95,
+                Math.min(
+                    145,
+                    value
+                )
+            );
+
+    }
+
+    else{
+
+        value =
+
+            75 +
+
+            Math.sin(
+                Date.now()/500
+            )*4 +
+
+            Math.random()*5;
+
+    }
+
+
+    heartData.push(
+        value
+    );
+
+
+    if(
+        heartData.length>70
+    ){
+
+        heartData.shift();
+
+    }
+
+
+    document.getElementById(
+        "heartRate"
+    ).textContent=
+        Math.round(value);
+
+
+    const state =
+        document.getElementById(
+            "heartState"
+        );
+
+
+    if(
+        value>=110
+    ){
+
+        state.textContent=
+            "⚠ Unusual variation";
+
+        state.className=
+            "danger";
+
+    }
+
+    else{
+
+        state.textContent=
+            "Normal";
+
+        state.className=
+            "good";
+
+    }
+
+
+    drawHeartGraph();
+
+}
+
+
+setInterval(
+    addHeartValue,
+    500
+);
+
+
+drawHeartGraph();
+
+
+/* =========================================================
+AI LOG
+========================================================= */
+
+function addLog(
+    message
+){
+
+    const log =
+        document.getElementById(
+            "aiLog"
+        );
+
+
+    const item =
+        document.createElement(
+            "div"
+        );
+
+
+    item.textContent=
+
+        "["+
+        new Date()
+        .toLocaleTimeString()+
+        "] "+
+        message;
+
+
+    log.appendChild(
+        item
+    );
+
+
+    log.scrollTop=
+        log.scrollHeight;
+
+}
+
+
+/* =========================================================
+REAL SMS / WHATSAPP REQUEST
+========================================================= */
+
+async function sendGuardianAlert(){
+
+    /*
+    IMPORTANT:
+
+    This does NOT directly contain
+    Twilio credentials.
+
+    It sends the emergency information
+    to your secure backend.
+
+    Backend endpoint:
+
+        POST /api/emergency
+
+    The backend then sends SMS /
+    WhatsApp using Twilio or another
+    messaging provider.
+    */
+
+
+    if(
+        !liveLocation
+    ){
+
+        addLog(
+            "ERROR: Live GPS location unavailable."
+        );
+
+        return;
+
+    }
+
+
+    const heartRate =
+        document.getElementById(
+            "heartRate"
+        ).textContent;
+
+
+    document.getElementById(
+        "cellularStatus"
+    ).textContent=
+    "SENDING";
+
+
+    document.getElementById(
+        "cellularState"
+    ).textContent=
+    "Sending guardian alert...";
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/emergency",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        guardian:
+                            "8767531125",
+
+                        heartRate:
+                            heartRate,
+
+                        latitude:
+                            liveLocation.latitude,
+
+                        longitude:
+                            liveLocation.longitude,
+
+                        accuracy:
+                            liveLocation.accuracy,
+
+                        event:
+                            "Possible emergency detected by Guardian AI"
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok
+        ){
+
+            throw new Error(
+                data.error ||
+                "Message server error"
+            );
+
+        }
+
+
+        document.getElementById(
+            "cellularStatus"
+        ).textContent=
+        "SENT";
+
+
+        document.getElementById(
+            "cellularState"
+        ).textContent=
+        "SMS / WhatsApp request accepted";
+
+
+        document.getElementById(
+            "cellularState"
+        ).className=
+        "good";
+
+
+        addLog(
+            "Guardian SMS/WhatsApp alert accepted by backend."
+        );
+
+
+    }
+
+    catch(error){
+
+        document.getElementById(
+            "cellularStatus"
+        ).textContent=
+        "ERROR";
+
+
+        document.getElementById(
+            "cellularState"
+        ).textContent=
+        error.message;
+
+
+        document.getElementById(
+            "cellularState"
+        ).className=
+        "danger";
+
+
+        addLog(
+            "Messaging error: "+
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+START SIMULATION
+========================================================= */
+
+function startSimulation(){
+
+    resetSystem(
+        false
+    );
+
+
+    simulationRunning=
+        true;
+
+
+    emergencyMode=
+        false;
+
+
+    simulationStart=
+        Date.now();
+
+
+    startLiveLocation();
+
+
+    addLog(
+        "AI monitoring started."
+    );
+
+
+    addLog(
+        "Heart-rate sensor initialized."
+    );
+
+
+    addLog(
+        "Motion sensor initialized."
+    );
+
+
+    addLog(
+        "LIVE GPS tracking active."
+    );
+
+
+    addLog(
+        "System observing normal conditions."
+    );
+
+
+    document.getElementById(
+        "simulationTime"
+    ).textContent=
+    "Monitoring active";
+
+
+    clearTimeout(
+        emergencyTimer
+    );
+
+
+    /*
+    After 8 seconds the demo
+    creates an abnormal event.
+    */
+
+    emergencyTimer =
+        setTimeout(
+
+            ()=>{
+
+                if(
+                    !simulationRunning
+                )
+                    return;
+
+
+                emergencyMode=
+                    true;
+
+
+                addLog(
+                    "UNUSUAL HEART-RATE VARIATION DETECTED."
+                );
+
+
+                addLog(
+                    "AI checking heart + motion pattern..."
+                );
+
+
+                document.getElementById(
+                    "motionValue"
+                ).textContent=
+                "ABNORMAL";
+
+
+                document.getElementById(
+                    "motionState"
+                ).textContent=
+                "Possible sudden movement";
+
+
+                document.getElementById(
+                    "motionState"
+                ).className=
+                "danger";
+
+
+                setTimeout(
+
+                    ()=>{
+
+                        if(
+                            simulationRunning
+                        ){
+
+                            triggerEmergency();
+
+                        }
+
+                    },
+
+                    3500
+
+                );
+
+            },
+
+            8000
+
+        );
+
+}
+
+
+/* =========================================================
+EMERGENCY
+========================================================= */
+
+function triggerEmergency(){
+
+    simulationRunning=
+        true;
+
+
+    emergencyMode=
+        true;
+
+
+    /* MAIN STATUS */
+
+    document.getElementById(
+        "systemStatus"
+    ).textContent=
+    "● DANGEROUS CONDITION DETECTED";
+
+
+    document.getElementById(
+        "systemStatus"
+    ).className=
+    "status danger";
+
+
+    document.getElementById(
+        "alertPanel"
+    ).className=
+    "panel big-alert alert-danger";
+
+
+    /* MOTION */
+
+    document.getElementById(
+        "motionValue"
+    ).textContent=
+    "ABNORMAL";
+
+
+    document.getElementById(
+        "motionState"
+    ).textContent=
+    "Possible dangerous event";
+
+
+    document.getElementById(
+        "motionState"
+    ).className=
+    "danger";
+
+
+    /* CAMERA */
+
+    document.getElementById(
+        "cameraValue"
+    ).textContent=
+    "REC";
+
+
+    document.getElementById(
+        "cameraState"
+    ).textContent=
+    "Event recording";
+
+
+    document.getElementById(
+        "cameraState"
+    ).className=
+    "danger";
+
+
+    /* GPS */
+
+    document.getElementById(
+        "gpsStatus"
+    ).textContent=
+    liveLocation
+    ? "LIVE"
+    : "ERROR";
+
+
+    document.getElementById(
+        "gpsState"
+    ).textContent=
+    liveLocation
+    ? "Live location attached"
+    : "Location unavailable";
+
+
+    /* VIBRATION */
+
+    document.getElementById(
+        "vibrationStatus"
+    ).textContent=
+    "ON";
+
+
+    document.getElementById(
+        "vibrationState"
+    ).textContent=
+    "Emergency vibration";
+
+
+    document.getElementById(
+        "vibrationState"
+    ).className=
+    "danger";
+
+
+    /* LOG */
+
+    addLog(
+        "Dangerous sensor combination detected."
+    );
+
+
+    addLog(
+        "AI verification completed."
+    );
+
+
+    addLog(
+        "Camera: event recording state active."
+    );
+
+
+    if(
+        liveLocation
+    ){
+
+        addLog(
+            "GPS: live location attached."
+        );
+
+    }
+
+
+    addLog(
+        "Guardian: +91 8767531125"
+    );
+
+
+    /* NOTIFICATION */
+
+    let locationMessage =
+        "Location unavailable";
+
+
+    if(
+        liveLocation
+    ){
+
+        locationMessage=
+
+        `${liveLocation.latitude.toFixed(6)},
+        ${liveLocation.longitude.toFixed(6)}`;
+
+    }
+
+
+    document.getElementById(
+        "notification"
+    ).innerHTML=`
+
+        <strong>
+            ⚠ DANGER ALERT
+        </strong>
+
+
+        <p
+            style="margin-top:10px">
+
+            Unusual sensor conditions
+            detected by Guardian AI.
+
+        </p>
+
+
+        <p
+            style="margin-top:10px">
+
+            ❤️ Heart-rate variation<br>
+
+            📐 Abnormal motion<br>
+
+            📷 Event recording active<br>
+
+            📍 Live location acquired<br>
+
+            📶 SMS / WhatsApp alert requested
+
+        </p>
+
+
+        <p
+            style="margin-top:10px">
+
+            <b>
+                Guardian:
+            </b>
+
+            +91 8767531125
+
+        </p>
+
+
+        <p
+            class="small"
+            style="margin-top:10px">
+
+            Location:
+            ${locationMessage}
+
+        </p>
+
+    `;
+
+
+    /* RED 3D LIGHT */
+
+    redLight.intensity=
+        3;
+
+
+    lensMaterial.emissive
+        .setHex(
+            0xff0033
+        );
+
+
+    lensCenterMaterial.emissive
+        .setHex(
+            0xff0033
+        );
+
+
+    ringMaterial.emissive
+        .setHex(
+            0x550010
+        );
+
+
+    /* DEVICE VIBRATION */
+
+    if(
+        navigator.vibrate
+    ){
+
+        navigator.vibrate(
+            [
+                300,
+                150,
+                300,
+                150,
+                500
+            ]
+        );
+
+    }
+
+
+    /* SEND REAL ALERT */
+
+    sendGuardianAlert();
+
+}
+
+
+/* =========================================================
+RESET
+========================================================= */
+
+function resetSystem(
+    full=true
+){
+
+    simulationRunning=
+        false;
+
+
+    emergencyMode=
+        false;
+
+
+    clearTimeout(
+        emergencyTimer
+    );
+
+
+    document.getElementById(
+        "systemStatus"
+    ).textContent=
+    "● NORMAL MONITORING";
+
+
+    document.getElementById(
+        "systemStatus"
+    ).className=
+    "status normal";
+
+
+    document.getElementById(
+        "alertPanel"
+    ).className=
+    "panel big-alert alert-normal";
+
+
+    /* MOTION */
+
+    document.getElementById(
+        "motionValue"
+    ).textContent=
+    "Stable";
+
+
+    document.getElementById(
+        "motionState"
+    ).textContent=
+    "Normal";
+
+
+    document.getElementById(
+        "motionState"
+    ).className=
+    "good";
+
+
+    /* CAMERA */
+
+    document.getElementById(
+        "cameraValue"
+    ).textContent=
+    "OFF";
+
+
+    document.getElementById(
+        "cameraState"
+    ).textContent=
+    "Standby";
+
+
+    document.getElementById(
+        "cameraState"
+    ).className=
+    "good";
+
+
+    /* CELLULAR */
+
+    document.getElementById(
+        "cellularStatus"
+    ).textContent=
+    "READY";
+
+
+    document.getElementById(
+        "cellularState"
+    ).textContent=
+    "Backend ready";
+
+
+    document.getElementById(
+        "cellularState"
+    ).className=
+    "good";
+
+
+    /* VIBRATION */
+
+    document.getElementById(
+        "vibrationStatus"
+    ).textContent=
+    "OFF";
+
+
+    document.getElementById(
+        "vibrationState"
+    ).textContent=
+    "Standby";
+
+
+    document.getElementById(
+        "vibrationState"
+    ).className=
+    "good";
+
+
+    document.getElementById(
+        "simulationTime"
+    ).textContent=
+    "Simulation stopped";
+
+
+    /* NOTIFICATION */
+
+    document.getElementById(
+        "notification"
+    ).innerHTML=`
+
+        <strong>
+            No emergency message
+        </strong>
+
+        <p
+            class="small"
+            style="margin-top:8px">
+
+            Emergency notification will
+            appear here when the system
+            detects a dangerous event.
+
+        </p>
+
+    `;
+
+
+    /* 3D */
+
+    redLight.intensity=
+        0;
+
+
+    lensMaterial.emissive
+        .setHex(
+            0x00323b
+        );
+
+
+    lensCenterMaterial.emissive
+        .setHex(
+            0x00e5ff
+        );
+
+
+    ringMaterial.emissive
+        .setHex(
+            0x003840
+        );
+
+
+    /* LOG */
+
+    if(full){
+
+        document.getElementById(
+            "aiLog"
+        ).innerHTML=`
+
+            <div>
+                [SYSTEM] Guardian AI initialized.
+            </div>
+
+            <div>
+                [HEART] Normal monitoring.
+            </div>
+
+            <div>
+                [MOTION] Motion sensor stable.
+            </div>
+
+            <div>
+                [AI] Waiting for sensor variation...
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+BATTERY
+========================================================= */
+
+let batteryValue=
+94;
+
+
+setInterval(
+
+    ()=>{
+
+        if(
+            simulationRunning
+        ){
+
+            batteryValue -=
+                .01;
+
+
+            if(
+                batteryValue<70
+            ){
+
+                batteryValue=
+                    94;
+
+            }
+
+
+            document.getElementById(
+                "battery"
+            ).textContent=
+                Math.round(
+                    batteryValue
+                );
+
+        }
+
+    },
+
+    1000
+
+);
+
+
+/* =========================================================
+SIMULATION CLOCK
+========================================================= */
+
+setInterval(
+
+    ()=>{
+
+        if(
+            simulationRunning
+        ){
+
+            const seconds =
+                Math.floor(
+
+                    (
+                        Date.now() -
+                        simulationStart
+
+                    ) / 1000
+
+                );
+
+
+            document.getElementById(
+                "simulationTime"
+            ).textContent=
+
+            "Monitoring: "+
+            seconds+
+            " sec";
+
+        }
+
+    },
+
+    1000
+
+);
+
+
+/* =========================================================
+RESIZE
+========================================================= */
+
+window.addEventListener(
+
+    "resize",
+
+    ()=>{
+
+        camera3D.aspect=
+
+            container.clientWidth /
+            container.clientHeight;
+
+
+        camera3D.updateProjectionMatrix();
+
+
+        renderer.setSize(
+
+            container.clientWidth,
+
+            container.clientHeight
+
+        );
+
+
+        resizeGraph();
+
+        drawHeartGraph();
+
+    }
+
+);
+
+
+/* =========================================================
+EXHIBITION MODE
+========================================================= */
+
+function exhibitionMode(){
+
+    if(
+        document.documentElement
+        .requestFullscreen
+    ){
+
+        document.documentElement
+        .requestFullscreen();
+
+    }
+
+    startSimulation();
+
+}
+
+
+/* =========================================================
+INITIALIZATION
+========================================================= */
+
+resetSystem();
+
+</script>
+
+</body>
+</html>
